@@ -1,5 +1,4 @@
 #include <iostream>
-#include <bitset>
 
 #include <vector>
 #include <limits>
@@ -22,7 +21,6 @@ public:
 
     void increment() {
         ++count;
-        //int j = num_bits - __builtin_ctzl(count);
         int j = __builtin_ctzl(count);
         for(std::size_t k=0; k<num_dims; ++k)
             x[k] ^= direction_integers[k][j];
@@ -39,7 +37,6 @@ public:
         std::uniform_int_distribution<x_t> dis;
 
         // k=0
-            //direction_integers[0].resize(num_bits);
             for(int l=1; l<=num_bits; ++l) {
                 x_t v = static_cast<x_t>(1) << (num_bits - l);
                 direction_integers[0][l-1] = v;
@@ -48,7 +45,6 @@ public:
             auto polynomial = PrimitivePolynomials[degree-1][pi];
             if(polynomial < 0) polynomial = PrimitivePolynomials[degree++][pi=0];
 
-            //direction_integers[k].resize(num_bits);
             direction_integers[k][0] = static_cast<x_t>(1) << (num_bits - 1);
             for(std::size_t l=2; l<=degree; ++l) {
                 x_t v = ((dis(gen) << 1) | 1) << (num_bits - l);
@@ -92,8 +88,9 @@ int main() {
 
     sobol_generator<3> sg(gen);
 
+    double y[3];
     for(int i=0; i<1024; ++i) {
-        auto y = sg();
-        cout << y[0] << " " << y[1] << endl;
+        sg.generate(y);
+        cout << y[1] << " " << y[2] << endl;
     }
 }
