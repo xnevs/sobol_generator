@@ -1,11 +1,13 @@
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 
 #include <mpi.h>
 
-#include <vector>
+#include <memory>
 #include <limits>
 #include <random>
+#include <vector>
 
 #define PPMT_MAX_DIM 30
 #include "PrimitivePolynomialsModuloTwo/PrimitivePolynomialsModuloTwoUpToDegree27.h"
@@ -16,18 +18,18 @@
 template <std::size_t num_dims = PPMT_MAX_DIM,
           typename RealType = double>
 class sobol_generator {
-public:
+private:
     using x_t = unsigned long;
     static constexpr auto num_bits = std::numeric_limits<x_t>::digits;
     static constexpr RealType norm = 1 / (static_cast<RealType>(1) + std::numeric_limits<x_t>::max());
 
-    decltype(new x_t[num_dims][num_bits]) direction_integers;
-    decltype(new x_t[num_dims][num_bits]) leap_integers;
+    std::array<std::array<x_t,num_bits>,num_dims> direction_integers;
+    std::array<std::array<x_t,num_bits>,num_dims> leap_integers;
 
     int frog_leap_len;
 
     unsigned long count;
-    std::vector<x_t> x;
+    std::array<x_t,num_dims> x;
 
     template <typename URNG>
     void initialize_direction_integers(URNG && gen) {
@@ -90,11 +92,7 @@ public:
 public:
 
     template <typename URNG>
-    sobol_generator(URNG && gen, MPI_Comm mpi_comm)
-      : direction_integers(new x_t[num_dims][num_bits])
-      , leap_integers(new x_t[num_dims][num_bits])
-      , count(0)
-      , x(num_dims) {
+    sobol_generator(URNG && gen, MPI_Comm mpi_comm): count(0) {
         
         int mpi_comm_size;
         MPI_Comm_size(mpi_comm, &mpi_comm_size);
@@ -107,7 +105,7 @@ public:
         if(mpi_comm_rank == 0) {
             initialize_direction_integers(gen);
         }
-        MPI_Bcast(direction_integers, num_dims*num_bits, type_to_mpi<x_t>::datatype, 0, mpi_comm);
+        MPI_Bcast(direction_integers.data(), num_dims*num_bits, type_to_mpi<x_t>::datatype, 0, mpi_comm);
 
         initialize_leap_integers(mpi_comm_size);
 
@@ -115,10 +113,6 @@ public:
             increment();
         }
         count = 0;
-    }
-
-    ~sobol_generator() {
-        delete[] direction_integers;
     }
 
     std::vector<RealType> operator()() {
@@ -152,7 +146,8 @@ int main(int argc, char *argv[]) {
     for(int i=0; i<5; ++i) {
         sg.generate(y);
         ostringstream oss;
-        oss << i << rank << ": " << y[1] << " " << y[2] << endl;
+        oss << setfill('0') << setw(3) << i << " " << setfill('0') << setw(3) << rank << ": " ;
+        oss << y[1] << " " << y[2] << endl;
         cout << oss.str();
     }
 
