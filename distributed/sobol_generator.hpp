@@ -99,6 +99,7 @@ public:
 
         initialize_leap_integers(mpi_comm_size);
 
+        std::fill_n(x.data(), num_dims, 0);
         for(int i=0; i<mpi_comm_rank; ++i) {
             increment();
         }
