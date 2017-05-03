@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include <vector>
 #include <limits>
 #include <random>
@@ -82,15 +80,14 @@ public:
 
 using namespace std;
 
-int main() {
-    random_device rd;
-    default_random_engine gen(rd());
+int main(int argc, char *argv[]) {
+    default_random_engine gen(1234);
 
     sobol_generator<3> sg(gen);
 
     double y[3];
-    for(int i=0; i<1024; ++i) {
+    for(int i=0; i<atoi(argv[1]); ++i) {
         sg.generate(y);
-        cout << y[1] << " " << y[2] << endl;
+        printf("%.4lf %.4lf\n", y[1], y[2]);
     }
 }

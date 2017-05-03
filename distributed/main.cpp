@@ -1,6 +1,4 @@
-#include <iostream>
-#include <sstream>
-#include <iomanip>
+#include <cstdio>
 #include <random>
 #include <vector>
 
@@ -17,7 +15,6 @@ int main(int argc, char *argv[]) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    random_device rd;
     default_random_engine gen(1234);
 
     sobol_generator<3> sg(gen, MPI_COMM_WORLD);
@@ -25,10 +22,7 @@ int main(int argc, char *argv[]) {
     double y[3];
     for(int i=0; i<5; ++i) {
         sg.generate(y);
-        ostringstream oss;
-        oss << setfill('0') << setw(3) << i << " " << setfill('0') << setw(3) << rank << ": " ;
-        oss << y[1] << " " << y[2] << endl;
-        cout << oss.str();
+        printf("%02d %02d: %.4lf %.4lf\n", i, rank, y[1], y[2]);
     }
 
     MPI_Finalize();
