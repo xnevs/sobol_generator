@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
 
     default_random_engine gen(1234);
 
-    sobol_generator<3> sg(gen, MPI_COMM_WORLD);
+    sobol_generator sg(3, gen, MPI_COMM_WORLD);
 
     double y[3];
     for(int i=0; i<5; ++i) {
