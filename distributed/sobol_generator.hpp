@@ -96,10 +96,8 @@ private:
     }
 
     void frog_leap() {
-        int sum = 0;
-        for(int pk=popcount-1; pk>=0; --pk) {
-            count_k[pk] += 1 + (sum>>pop_pos[pk]);
-            sum += 1 << pop_pos[pk];
+        for(int pk=0; pk<popcount; ++pk) {
+            count_k[pk] += num_procs >> pop_pos[pk];
         }
         for(std::size_t k=0; k<num_dims; ++k) {
             for(int pk=0; pk<popcount; ++pk) {
