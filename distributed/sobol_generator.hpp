@@ -101,9 +101,9 @@ private:
         int carry = 0;
         for(int pk=0; pk<popcount-1; ++pk) {
             count_k[pk] += (num_procs >> pop_pos[pk]) + carry;
-            if(count_k[pk] << pop_pos[pk] == (1<<pop_pos[pk+1])+offset) {
+            if(count_k[pk] << pop_pos[pk] == (1<<pop_pos[pk+1])+1) {
                 carry = 1;
-                count_k[pk] = offset;
+                count_k[pk] = 1;
             } else {
                 carry = 0;
             }
