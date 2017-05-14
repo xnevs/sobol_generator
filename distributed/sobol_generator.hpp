@@ -16,11 +16,16 @@ template <std::size_t num_dims,
 class sobol_generator {
 private:
     using x_t = unsigned long;
-    static constexpr auto num_bits = std::numeric_limits<x_t>::digits;
+    //static constexpr auto num_bits = std::numeric_limits<x_t>::digits;
+    static constexpr x_t num_bits = 8;
     static constexpr RealType norm = 1 / (static_cast<RealType>(1) + std::numeric_limits<x_t>::max());
 
+    int num_procs;
     int popcount;
     std::unique_ptr<int[]> pop_pos;
+
+    // TODO
+    std::unique_ptr<int[]> count_k;
 
     std::unique_ptr<x_t[][num_bits]>           direction_integers;
     std::unique_ptr<x_t[][num_dims][num_bits]> leap_integers;
@@ -75,21 +80,34 @@ private:
 
     void increment() {
         ++count;
-        int j = __builtin_ctzl(count);
+        auto j = __builtin_ctzl(count);
         for(std::size_t k=0; k<num_dims; ++k)
             x[k] ^= direction_integers[k][j];
     }
 
-    void frog_leap() {
+    void frog_leap1() {
         ++count;
         for(std::size_t k=0; k<num_dims; ++k) {
             for(int pk=0; pk<popcount; ++pk) {
-                int j = __builtin_ctzl(count << pop_pos[pk]);
+                auto j = __builtin_ctzl(count << pop_pos[pk]);
                 x[k] ^= leap_integers[pk][k][j];
             }
         }
     }
 
+    void frog_leap() {
+        int sum = 0;
+        for(int pk=popcount-1; pk>=0; --pk) {
+            count_k[pk] += 1 + (sum>>pop_pos[pk]);
+            sum += 1 << pop_pos[pk];
+        }
+        for(std::size_t k=0; k<num_dims; ++k) {
+            for(int pk=0; pk<popcount; ++pk) {
+                auto j = __builtin_ctzl(count_k[pk] << pop_pos[pk]);
+                x[k] ^= leap_integers[pk][k][j];
+            }
+        }
+    }
 public:
 
     template <typename URNG>
@@ -100,6 +118,7 @@ public:
         
         int mpi_comm_size;
         MPI_Comm_size(mpi_comm,&mpi_comm_size);
+        num_procs = mpi_comm_size;
 
         popcount = __builtin_popcount(mpi_comm_size);
         pop_pos.reset(new int[popcount]);
@@ -118,11 +137,37 @@ public:
 
         initialize_leap_integers();
 
+        if(mpi_comm_rank == 0) {
+            printf("di[0]: ");
+            for(int l=0; l<num_bits; ++l) {
+                printf(" %lu", direction_integers[0][l]);
+            }
+            printf("\n");
+
+            for(int pk=0; pk<popcount; ++pk) {
+                printf("li[%d]: ", pop_pos[pk]);
+                for(int l=0; l<num_bits; ++l) {
+                    printf(" %lu", leap_integers[pk][0][l]);
+                }
+                printf("\n");
+            }
+        }
+
+        count_k.reset(new int[popcount]);
+        for(int pk=0; pk<popcount; ++pk) {
+            count_k[pk] = mpi_comm_rank >> pop_pos[pk];
+        }
+
         std::fill_n(x.get(),num_dims,0);
         for(int i=0; i<mpi_comm_rank; ++i) {
             increment();
         }
         count = 0;
+
+        count_k.reset(new int[popcount]);
+        for(int pk=0; pk<popcount; ++pk) {
+            count_k[pk] = mpi_comm_rank >> pop_pos[pk];
+        }
     }
 
     std::vector<RealType> operator()() {
@@ -138,6 +183,14 @@ public:
     void generate(ForwardIt first) {
         for(std::size_t i=0; i<num_dims; ++i) {
             *(first++) = x[i] * norm;
+        }
+        frog_leap();
+    }
+
+    template <typename ForwardIt>
+    void generatei(ForwardIt first) {
+        for(std::size_t i=0; i<num_dims; ++i) {
+            *(first++) = x[i];
         }
         frog_leap();
     }
