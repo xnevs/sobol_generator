@@ -24,6 +24,8 @@ private:
     int popcount;
     std::unique_ptr<int[]> pop_pos;
 
+    int offset;
+
     // TODO
     std::unique_ptr<int[]> count_k;
 
@@ -96,9 +98,17 @@ private:
     }
 
     void frog_leap() {
-        for(int pk=0; pk<popcount; ++pk) {
-            count_k[pk] += num_procs >> pop_pos[pk];
+        int carry = 0;
+        for(int pk=0; pk<popcount-1; ++pk) {
+            count_k[pk] += (num_procs >> pop_pos[pk]) + carry;
+            if(count_k[pk] << pop_pos[pk] == (1<<pop_pos[pk+1])+offset) {
+                carry = 1;
+                count_k[pk] = offset;
+            } else {
+                carry = 0;
+            }
         }
+        count_k[popcount-1] += (num_procs >> pop_pos[popcount-1]) + carry;
         for(std::size_t k=0; k<num_dims; ++k) {
             for(int pk=0; pk<popcount; ++pk) {
                 auto j = __builtin_ctzl(count_k[pk] << pop_pos[pk]);
@@ -127,6 +137,7 @@ public:
 
         int mpi_comm_rank;
         MPI_Comm_rank(mpi_comm,&mpi_comm_rank);
+        offset = mpi_comm_rank;
 
         if(mpi_comm_rank == 0) {
             initialize_direction_integers(gen);
