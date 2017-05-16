@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     sobol_generator<3> sg(gen, MPI_COMM_WORLD);
 
     double y[3];
-    for(int i=0; i<10; ++i) {
+    for(int i=0; i<5; ++i) {
         sg.generate(y);
         printf("%02d %02d: %.4lf %.4lf\n", i, rank, y[1], y[2]);
     }
