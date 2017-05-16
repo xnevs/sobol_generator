@@ -83,16 +83,6 @@ private:
             x[k] ^= direction_integers[k][j];
     }
 
-/*    void frog_leap1() {
-        ++count;
-        for(std::size_t k=0; k<num_dims; ++k) {
-            for(int pk=0; pk<popcount; ++pk) {
-                auto j = __builtin_ctzl(count << pop_pos[pk]);
-                x[k] ^= leap_integers[pk][k][j];
-            }
-        }
-    }*/
-
     void frog_leap() {
         ++count;
         for(std::size_t k=0; k<num_dims; ++k) {
@@ -133,22 +123,6 @@ public:
         MPI_Bcast(direction_integers.get(),num_dims*num_bits,type_to_mpi<x_t>::datatype,0,mpi_comm);
 
         initialize_leap_integers();
-
-/*        if(mpi_comm_rank == 0) {
-            printf("di[0]: ");
-            for(int l=0; l<num_bits; ++l) {
-                printf(" %lu", direction_integers[0][l]);
-            }
-            printf("\n");
-
-            for(int pk=0; pk<popcount; ++pk) {
-                printf("li[%d]: ", pop_pos[pk]);
-                for(int l=0; l<num_bits; ++l) {
-                    printf(" %lu", leap_integers[pk][0][l]);
-                }
-                printf("\n");
-            }
-        }*/
 
         std::fill_n(x.get(),num_dims,0);
         for(int i=0; i<mpi_comm_rank; ++i) {
