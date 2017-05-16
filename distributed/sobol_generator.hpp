@@ -16,8 +16,7 @@ template <std::size_t num_dims,
 class sobol_generator {
 private:
     using x_t = unsigned long;
-    //static constexpr auto num_bits = std::numeric_limits<x_t>::digits;
-    static constexpr x_t num_bits = 8;
+    static constexpr auto num_bits = std::numeric_limits<x_t>::digits;
     static constexpr RealType norm = 1 / (static_cast<RealType>(1) + std::numeric_limits<x_t>::max());
 
     int num_procs;
