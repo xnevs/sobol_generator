@@ -26,9 +26,6 @@ private:
 
     int offset;
 
-    // TODO
-    std::unique_ptr<int[]> count_k;
-
     std::unique_ptr<x_t[][num_bits]>           direction_integers;
     std::unique_ptr<x_t[][num_dims][num_bits]> leap_integers;
 
@@ -39,7 +36,7 @@ private:
     void initialize_direction_integers(URNG && gen) {
         std::uniform_int_distribution<x_t> dis;
         // k=0
-            for(int l=1; l<=num_bits; ++l) {
+            for(unsigned long l=1; l<=num_bits; ++l) {
                 x_t v = static_cast<x_t>(1) << (num_bits - l);
                 direction_integers[0][l-1] = v;
             }
@@ -87,7 +84,7 @@ private:
             x[k] ^= direction_integers[k][j];
     }
 
-    void frog_leap1() {
+/*    void frog_leap1() {
         ++count;
         for(std::size_t k=0; k<num_dims; ++k) {
             for(int pk=0; pk<popcount; ++pk) {
@@ -95,24 +92,16 @@ private:
                 x[k] ^= leap_integers[pk][k][j];
             }
         }
-    }
+    }*/
 
     void frog_leap() {
-        int carry = 0;
-        for(int pk=0; pk<popcount-1; ++pk) {
-            count_k[pk] += (num_procs >> pop_pos[pk]) + carry;
-            if(count_k[pk] << pop_pos[pk] == (1<<pop_pos[pk+1])+1) {
-                carry = 1;
-                count_k[pk] = 1;
-            } else {
-                carry = 0;
-            }
-        }
-        count_k[popcount-1] += (num_procs >> pop_pos[popcount-1]) + carry;
+        ++count;
         for(std::size_t k=0; k<num_dims; ++k) {
+            unsigned long n = count * num_procs;
             for(int pk=0; pk<popcount; ++pk) {
-                auto j = __builtin_ctzl(count_k[pk] << pop_pos[pk]);
+                auto j = __builtin_ctzl( (((n+offset)>>pop_pos[pk])<<pop_pos[pk]));
                 x[k] ^= leap_integers[pk][k][j];
+                n -= 1<<pop_pos[pk];
             }
         }
     }
@@ -146,7 +135,7 @@ public:
 
         initialize_leap_integers();
 
-        if(mpi_comm_rank == 0) {
+/*        if(mpi_comm_rank == 0) {
             printf("di[0]: ");
             for(int l=0; l<num_bits; ++l) {
                 printf(" %lu", direction_integers[0][l]);
@@ -160,23 +149,13 @@ public:
                 }
                 printf("\n");
             }
-        }
-
-        count_k.reset(new int[popcount]);
-        for(int pk=0; pk<popcount; ++pk) {
-            count_k[pk] = mpi_comm_rank >> pop_pos[pk];
-        }
+        }*/
 
         std::fill_n(x.get(),num_dims,0);
         for(int i=0; i<mpi_comm_rank; ++i) {
             increment();
         }
         count = 0;
-
-        count_k.reset(new int[popcount]);
-        for(int pk=0; pk<popcount; ++pk) {
-            count_k[pk] = mpi_comm_rank >> pop_pos[pk];
-        }
     }
 
     std::vector<RealType> operator()() {
