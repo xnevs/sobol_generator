@@ -115,7 +115,7 @@ public:
 
         int mpi_comm_rank;
         MPI_Comm_rank(mpi_comm,&mpi_comm_rank);
-        offset = mpi_comm_rank;
+        offset = mpi_comm_rank+1;
 
         if(mpi_comm_rank == 0) {
             initialize_direction_integers(gen);
@@ -125,7 +125,7 @@ public:
         initialize_leap_integers();
 
         std::fill_n(x.get(),num_dims,0);
-        for(int i=0; i<mpi_comm_rank; ++i) {
+        for(int i=0; i<offset; ++i) {
             increment();
         }
         count = 0;

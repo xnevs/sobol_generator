@@ -87,13 +87,13 @@ private:
 
     void frog_leap() {
         ++count;
-        for(std::size_t k=0; k<num_dims; ++k) {
-            unsigned long n = count * num_procs;
-            for(int pk=0; pk<popcount; ++pk) {
-                auto j = __builtin_ctzl( (((n+offset)>>pop_pos[pk])<<pop_pos[pk]));
+        unsigned long n = count * num_procs;
+        for(int pk=0; pk<popcount; ++pk) {
+            auto j = __builtin_ctzl( (((n+offset)>>pop_pos[pk])<<pop_pos[pk]));
+            for(std::size_t k=0; k<num_dims; ++k) {
                 x[k] ^= leap_integers[pk][k][j];
-                n -= 1<<pop_pos[pk];
             }
+                n -= 1<<pop_pos[pk];
         }
     }
 
@@ -118,7 +118,7 @@ public:
 
         int mpi_comm_rank;
         MPI_Comm_rank(mpi_comm,&mpi_comm_rank);
-        offset = mpi_comm_rank;
+        offset = mpi_comm_rank + 1;
 
         if(mpi_comm_rank == 0) {
             initialize_direction_integers(gen);
@@ -132,7 +132,7 @@ public:
         initialize_leap_integers();
 
         std::fill_n(x.get(),num_dims,0);
-        for(int i=0; i<mpi_comm_rank; ++i) {
+        for(int i=0; i<offset; ++i) {
             increment();
         }
         count = 0;
