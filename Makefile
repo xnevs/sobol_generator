@@ -12,3 +12,8 @@ generate: examples/generate.cpp sobol_generator/sobol_generator.hpp sobol_genera
 
 PrimitivePolynomialsModuloTwoUpToDegree27.o: PrimitivePolynomialsModuloTwo/PrimitivePolynomialsModuloTwoUpToDegree27.h PrimitivePolynomialsModuloTwo/PrimitivePolynomialsModuloTwoUpToDegree27.c
 	$(CXX) $(CXX_FLAGS) -c PrimitivePolynomialsModuloTwo/PrimitivePolynomialsModuloTwoUpToDegree27.c
+
+@PHONY: clean
+
+clean:
+	rm PrimitivePolynomialsModuloTwoUpToDegree27.o
