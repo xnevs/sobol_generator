@@ -1,5 +1,3 @@
 /integrate
 /generate
 /direction_numbers/*
-*.o
-*.out
