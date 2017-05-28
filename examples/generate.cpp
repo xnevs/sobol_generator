@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cstdlib>
 #include <random>
 #include <vector>
 
@@ -20,9 +21,9 @@ int main(int argc, char *argv[]) {
     sobol::sobol_generator<3> sg(gen, MPI_COMM_WORLD);
 
     double y[3];
-    for(int i=0; i<5; ++i) {
+    for(int i=0; i<atoi(argv[1]); ++i) {
         sg.generate(y);
-        printf("%02d %02d: %.4lf %.4lf\n", i, rank, y[1], y[2]);
+        printf("%02d %02d: %.4lf %.4lf %.4lf\n", i, rank, y[0], y[1], y[2]);
     }
 
     MPI_Finalize();
