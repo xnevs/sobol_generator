@@ -4,16 +4,8 @@ CXX_FLAGS=-std=c++14 -O2 -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor
 
 all: integrate generate
 
-integrate: examples/integrate.cpp sobol_generator/sobol_generator.hpp sobol_generator/type_to_mpi.hpp PrimitivePolynomialsModuloTwoUpToDegree27.o
-	$(MPICXX) $(CXX_FLAGS) -o integrate PrimitivePolynomialsModuloTwoUpToDegree27.o examples/integrate.cpp
+integrate: examples/integrate.cpp sobol_generator/sobol_generator.hpp sobol_generator/type_to_mpi.hpp
+	$(MPICXX) $(CXX_FLAGS) -o integrate examples/integrate.cpp
 	
-generate: examples/generate.cpp sobol_generator/sobol_generator.hpp sobol_generator/type_to_mpi.hpp PrimitivePolynomialsModuloTwoUpToDegree27.o
-	$(MPICXX) $(CXX_FLAGS) -o generate PrimitivePolynomialsModuloTwoUpToDegree27.o examples/generate.cpp
-
-PrimitivePolynomialsModuloTwoUpToDegree27.o: PrimitivePolynomialsModuloTwo/PrimitivePolynomialsModuloTwoUpToDegree27.h PrimitivePolynomialsModuloTwo/PrimitivePolynomialsModuloTwoUpToDegree27.c
-	$(CXX) $(CXX_FLAGS) -c PrimitivePolynomialsModuloTwo/PrimitivePolynomialsModuloTwoUpToDegree27.c
-
-@PHONY: clean
-
-clean:
-	rm PrimitivePolynomialsModuloTwoUpToDegree27.o
+generate: examples/generate.cpp sobol_generator/sobol_generator.hpp sobol_generator/type_to_mpi.hpp
+	$(MPICXX) $(CXX_FLAGS) -o generate examples/generate.cpp

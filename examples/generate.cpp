@@ -1,11 +1,8 @@
 #include <cstdio>
 #include <cstdlib>
-#include <random>
-#include <vector>
 
 #include <mpi.h>
 
-#define PPMT_MAX_DIM 30
 #include "../sobol_generator/sobol_generator.hpp"
 
 using namespace std;
@@ -16,9 +13,7 @@ int main(int argc, char *argv[]) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    default_random_engine gen(1234);
-
-    sobol::sobol_generator<3> sg(gen, MPI_COMM_WORLD);
+    sobol::sobol_generator<3> sg(argv[2], MPI_COMM_WORLD);
 
     double y[3];
     for(int i=0; i<atoi(argv[1]); ++i) {

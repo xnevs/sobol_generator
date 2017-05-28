@@ -1,7 +1,5 @@
 /integrate
 /generate
-PrimitivePolynomialsModuloTwoUpToDegree27.c
-PrimitivePolynomialsModuloTwoUpToDegree27.h
-points
+/direction_numbers/*
 *.o
 *.out
