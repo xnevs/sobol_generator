@@ -95,7 +95,7 @@ private:
             for(std::size_t k=0; k<num_dims; ++k) {
                 x[k] ^= leap_integers[pk][k][j];
             }
-                n -= 1<<pop_pos[pk];
+            n -= 1<<pop_pos[pk];
         }
     }
 
