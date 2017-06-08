@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <vector>
 #include <cmath>
+#include <random>
 
 #include <mpi.h>
 
@@ -8,10 +9,10 @@
 
 using namespace std;
 
-double f(double x, double y) {
-    return sin(y) * pow(x,2);
+double f(double x[]) {
+    return sin(x[0]+2*x[1]) + 3*pow(x[2],2) + 4*x[3];
 }
-double int_f = (2.0/3) * pow(sin(0.5),2);
+double int_f = 3 + sin(1)/2 + sin(2)/2 - sin(3)/2;
 
 int main(int argc, char *argv[]) {
     MPI_Init(&argc, &argv);
@@ -23,13 +24,13 @@ int main(int argc, char *argv[]) {
     int comm_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &comm_rank);
 
-    sobol::sobol_generator<2> sg(argv[1], MPI_COMM_WORLD);
+    sobol::sobol_generator<4> sg(argv[1], MPI_COMM_WORLD);
 
     double sum = 0;
-    double y[2];
+    double x[4];
     for(int i=0; i<N; ++i) {
-        sg.generate(y);
-        sum += f(y[0],y[1]);
+        sg.generate(x);
+        sum += f(x);
     }
 
     if(comm_rank == 0) {

@@ -20,10 +20,10 @@ int main(int argc, char *argv[]) {
     int comm_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &comm_rank);
 
-    sobol::sobol_generator<2> sg(argv[1], MPI_COMM_WORLD);
-    double y[2];
+    sobol::sobol_generator<4> sg(argv[1], MPI_COMM_WORLD);
+    double y[4];
 
-    int n = 10000000;
+    int n = 20000000;
 
     double sum = 0;
     for(int i=0; i<n; ++i) {
