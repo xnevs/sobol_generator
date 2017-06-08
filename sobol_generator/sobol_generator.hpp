@@ -88,10 +88,10 @@ private:
     }
 
     void frog_leap() {
-        ++count;
-        unsigned long n = count * num_procs;
+        count += num_procs;
+        unsigned long n = count;
         for(int pk=0; pk<popcount; ++pk) {
-            auto j = __builtin_ctzl( (((n+offset)>>pop_pos[pk])<<pop_pos[pk]));
+            auto j = __builtin_ctzl( (n>>pop_pos[pk])<<pop_pos[pk] );
             for(std::size_t k=0; k<num_dims; ++k) {
                 x[k] ^= leap_integers[pk][k][j];
             }
@@ -136,7 +136,7 @@ public:
         for(int i=0; i<offset; ++i) {
             increment();
         }
-        count = 0;
+        count = offset;
     }
 
 
