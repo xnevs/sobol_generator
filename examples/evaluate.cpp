@@ -1,7 +1,6 @@
 #include <cstdio>
 #include <vector>
 #include <cmath>
-#include <random>
 
 #include <mpi.h>
 
@@ -35,7 +34,7 @@ int main(int argc, char *argv[]) {
 
     if(comm_rank == 0) {
         MPI_Reduce(MPI_IN_PLACE,&sum,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
-        printf("%.16lf\n", int_f);
+        //printf("%.16lf\n", int_f);
         printf("%.16lf\n", sum/(comm_size*N));
     } else {
         MPI_Reduce(&sum,&sum,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);

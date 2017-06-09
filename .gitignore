@@ -1,4 +1,10 @@
 /integrate
 /generate
+/generate10
+/generate20
+/generate30
+/generate40
+/generate50
+/real
 /evaluate
 /direction_numbers/*

@@ -5,7 +5,7 @@
 
 #include "../sobol_generator/sobol_generator.hpp"
 
-#define n_dimensions 10
+#define n_dimensions 50
 
 using namespace std;
 
