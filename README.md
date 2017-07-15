@@ -31,7 +31,27 @@ To use `sobol_generator::sobol_generator` you must include the `sobol_generatot.
 an object of this class.
 
 The desired number of dimensions is sepcified as a template parameter, whereas the constructor accepts two arguments:
-  * the path to the file containing direction integers; examples available at [3], and
-  * an MPI Communicator that represents the processes where we wish to generate Sobol' numbers.
+  * the path to the file containing direction integers; examples available at [[3]](http://web.maths.unsw.edu.au/~fkuo/sobol/), and
+  * an MPI Communicator that represents the processes where we wish to generate Sobol' numbers, usually `MPI_COMM_WORLD`.
 
 [3] Kuo, Frances and Joe, Stephen. [Sets of direction numbers](http://web.maths.unsw.edu.au/~fkuo/sobol/). 
+
+## Example
+
+A very simple example of Monte Carlo integration using `sobol_generator` is available in the file `example.cpp`.
+
+There we integrate the function `f(x,y) = sin(x) · y²` on the unit square `[0,1]×[0,1]`.
+
+### Building
+
+Run `make` in the root directory.
+
+The result of building is the `./example` binary.
+
+### Running
+
+To run the Monte Carlo integration example with 4 processes issue the command
+
+```mpirun -np 4 ./example direction-integers.txt```
+
+A set of direction integers (`direction-integers.txt` above) must be supplied as a command line argument. High quality sets of direction integers are available at [[3]](http://web.maths.unsw.edu.au/~fkuo/sobol/). The format of the file is the same as at [[3]](http://web.maths.unsw.edu.au/~fkuo/sobol/).
