@@ -30,7 +30,7 @@ To use `sobol_generator::sobol_generator` you must include the `sobol_generatot.
 an object of this class:
 
 ```c++
-sobol_generator::sobol_generator<n_dims> sg(direction_integers_path, mpi_communicator);
+sobol_generator::sobol_generator<n_dims> sg(path_to_direction_integers, mpi_communicator);
 ```
 
 The desired number of dimensions is sepcified as a template parameter and the constructor accepts two arguments:
