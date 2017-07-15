@@ -7,6 +7,8 @@
 #include <vector>
 #include <algorithm>
 
+#include <mpi.h>
+
 #include "type_to_mpi.hpp"
 
 namespace sobol {
