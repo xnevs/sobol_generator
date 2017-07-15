@@ -1,5 +1,4 @@
 # sobol_generator
-A parallel implementation of the Sobol' quasirandom number generator
 
 A Sobol' quasirandom number generator is type [low-discrepancy](https://en.wikipedia.org/wiki/Low-discrepancy_sequence) number sequence generator.
 A definition of a Sobol' number sequence can be found in [1].
