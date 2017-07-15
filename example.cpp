@@ -27,11 +27,18 @@ int main(int argc, char *argv[]) {
     int comm_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &comm_rank);
 
-    // create a sobol_generator object
-    sobol::sobol_generator<2> sg(argv[1], MPI_COMM_WORLD);
+    const int n_dims = 2; // integrating a function of two arguments
+    const int n_samples = 2000000;
 
-    // prepare an array for the generated vectors
-    double y[2];
+    // create a sobol_generator object
+    //  * the number of dimensions is a template parameter
+    //  * the first constructor arguments is the path to a file
+    //      containing the direction integers
+    //  * the second constructor argument is an MPI communicator
+    sobol::sobol_generator<n_dims> sg(argv[1], MPI_COMM_WORLD);
+
+    // prepare an array for a sample
+    double y[n_dims];
 
     // the number of samples
     int n = 2000000;
@@ -39,6 +46,8 @@ int main(int argc, char *argv[]) {
     // Monte Carlo integration
     double sum = 0;
     for(int i=0; i<n; ++i) {
+        // call sg.generate(y) to fill the array y
+        // with the vaules of the next sample
         sg.generate(y);
         sum += f(y[0],y[1]);
     }
