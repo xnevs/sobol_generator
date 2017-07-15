@@ -42,7 +42,7 @@ To generate sample there are two methods available: using the `operator ()`, as 
 
 ```c++
 vector<double> sample = sg();
-```,
+```
 
 or using the `sg.generate` method
 
@@ -71,6 +71,6 @@ To run the Monte Carlo integration example with 4 processes issue the command
 
 ```bash
 mpirun -np 4 ./example direction-integers.txt
-```.
+```
 
 A set of direction integers (`direction-integers.txt` above) must be supplied as a command line argument. High quality sets of direction integers are available at [[3]](http://web.maths.unsw.edu.au/~fkuo/sobol/). The format of the file is the same as at [[3]](http://web.maths.unsw.edu.au/~fkuo/sobol/).
