@@ -1,5 +1,5 @@
-#ifndef TYPE_TO_MPI_H
-#define TYPE_TO_MPI_H
+#ifndef TYPE_TO_MPI_HPP
+#define TYPE_TO_MPI_HPP
 
 #include <mpi.h>
 
@@ -28,4 +28,4 @@ struct type_to_mpi<unsigned long> {
 
 }} // namespace sobol::detail
 
-#endif // TYPE_TO_MPI_H
+#endif // TYPE_TO_MPI_HPP
