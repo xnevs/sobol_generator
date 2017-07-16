@@ -37,7 +37,7 @@ The desired number of dimensions is specified as a template parameter and the co
   * the path to the file containing direction integers; examples available at [[3]](http://web.maths.unsw.edu.au/~fkuo/sobol/), and
   * an MPI Communicator that represents the processes where we wish to generate Sobol' numbers, usually `MPI_COMM_WORLD`.
 
-There are two methods to generate a new sample:
+There are two methods of generating samples:
   * using the `operator ()`, as in
 ```c++
 vector<double> sample = sg();
